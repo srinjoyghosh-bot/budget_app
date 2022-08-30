@@ -40,7 +40,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               key: _key,
               child: Column(
                 children: [
-                  const Spacer(),
+                  SizedBox(height: SizeConfig.blockSizeVertical * 20),
                   TextFormField(
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
@@ -169,7 +169,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       ),
                     ),
                   ),
-                  const Spacer(),
                 ],
               )),
         ),

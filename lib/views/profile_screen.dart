@@ -1,6 +1,7 @@
 import 'package:budget_app/size_config.dart';
 import 'package:budget_app/styles.dart';
 import 'package:budget_app/views/edit_budget_screen.dart';
+import 'package:budget_app/views/login_screen.dart';
 import 'package:budget_app/views/widgets/profile_screen_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -70,7 +71,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ProfileScreenTile(
             title: 'Log Out',
             icon: const Icon(Icons.logout),
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed(LoginScreen.id);
+            },
           ),
         ],
       ),

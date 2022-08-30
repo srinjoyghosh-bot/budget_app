@@ -1,3 +1,4 @@
+import 'package:budget_app/views/main_screen.dart';
 import 'package:budget_app/views/signup_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -103,7 +104,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushReplacementNamed(MainScreen.id);
+                        },
                         child: Text(
                           'Login',
                           style: TextStyle(
