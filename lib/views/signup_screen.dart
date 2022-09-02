@@ -1,4 +1,8 @@
+import 'package:budget_app/constants/enums.dart';
+import 'package:budget_app/util/snackbars.dart';
+import 'package:budget_app/view_models/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../size_config.dart';
 import '../styles.dart';
@@ -15,10 +19,26 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _key = GlobalKey<FormState>();
   String email = '', password = '', username = '', budget = '';
+  late AuthViewModel _model;
+
+  void submit() async {
+    final isValid = _key.currentState?.validate();
+    if (isValid == null || !isValid) {
+      return;
+    }
+    _key.currentState?.save();
+    final status = await _model.signup(email, password, username, budget);
+    if (status) {
+      showSuccessSnackbar('Account created', context);
+    } else {
+      showErrorSnackbar('Some error occured', context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    _model = Provider.of<AuthViewModel>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: brandColor,
@@ -160,12 +180,23 @@ class _SignupScreenState extends State<SignupScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                        onPressed: () {},
-                        child: Text(
-                          'Signup',
-                          style: TextStyle(
-                              fontSize: SizeConfig.blockSizeVertical * 2),
-                        )),
+                        onPressed: () {
+                          if (_model.state != ViewState.busy) {
+                            submit();
+                          }
+                        },
+                        child: _model.state == ViewState.idle
+                            ? Text(
+                                'Signup',
+                                style: TextStyle(
+                                    fontSize: SizeConfig.blockSizeVertical * 2),
+                              )
+                            : SizedBox(
+                                height: SizeConfig.blockSizeVertical * 2,
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )),
                   ),
                   SizedBox(height: SizeConfig.blockSizeVertical * 4),
                   TextButton.icon(

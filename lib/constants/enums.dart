@@ -9,3 +9,9 @@ enum TransactionType {
   spent,
   receive,
 }
+
+enum ViewState {
+  busy,
+  idle,
+  error,
+}

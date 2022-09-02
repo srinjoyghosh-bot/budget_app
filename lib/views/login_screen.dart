@@ -1,6 +1,10 @@
+import 'package:budget_app/constants/enums.dart';
+import 'package:budget_app/util/snackbars.dart';
+import 'package:budget_app/view_models/auth_viewmodel.dart';
 import 'package:budget_app/views/main_screen.dart';
 import 'package:budget_app/views/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../size_config.dart';
 import '../styles.dart';
@@ -16,9 +20,25 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _key = GlobalKey<FormState>();
   String email = '', password = '';
+  late AuthViewModel _model;
+
+  void submit() async {
+    final isValid = _key.currentState?.validate();
+    if (isValid == null || !isValid) {
+      return;
+    }
+    _key.currentState?.save();
+    final result = await _model.login(email, password);
+    if (result) {
+      Navigator.of(context).pushReplacementNamed(MainScreen.id);
+    } else {
+      showErrorSnackbar(_model.errorMessage, context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    _model = Provider.of<AuthViewModel>(context);
     SizeConfig().init(context);
     return Scaffold(
       backgroundColor: brandColor,
@@ -105,14 +125,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context)
-                              .pushReplacementNamed(MainScreen.id);
+                          if (_model.state == ViewState.idle) {
+                            submit();
+                          }
                         },
-                        child: Text(
-                          'Login',
-                          style: TextStyle(
-                              fontSize: SizeConfig.blockSizeVertical * 2),
-                        )),
+                        child: _model.state == ViewState.idle
+                            ? Text(
+                                'Login',
+                                style: TextStyle(
+                                    fontSize: SizeConfig.blockSizeVertical * 2),
+                              )
+                            : SizedBox(
+                                height: SizeConfig.blockSizeVertical * 2,
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )),
                   ),
                   SizedBox(height: SizeConfig.blockSizeVertical * 4),
                   TextButton.icon(

@@ -1,9 +1,15 @@
 import 'package:budget_app/router.dart';
 import 'package:budget_app/styles.dart';
+import 'package:budget_app/view_models/auth_viewmodel.dart';
 import 'package:budget_app/views/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() {
+import 'locator.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupLocator();
   runApp(const MyApp());
 }
 
@@ -13,13 +19,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Budget App',
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch().copyWith(primary: brandColor)),
-      // home: const MainScreen(),
-      initialRoute: LoginScreen.id,
-      onGenerateRoute: AppRouter.generateRoute,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (ctx) => AuthViewModel()),
+      ],
+      child: MaterialApp(
+        title: 'Budget App',
+        theme: ThemeData(
+            colorScheme:
+                ColorScheme.fromSwatch().copyWith(primary: brandColor)),
+        // home: const MainScreen(),
+        initialRoute: LoginScreen.id,
+        onGenerateRoute: AppRouter.generateRoute,
+      ),
     );
   }
 }
