@@ -1,4 +1,8 @@
+import 'package:budget_app/constants/enums.dart';
+import 'package:budget_app/util/snackbars.dart';
+import 'package:budget_app/view_models/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../size_config.dart';
 
@@ -13,9 +17,30 @@ class ChangePasswordScreen extends StatefulWidget {
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   String oldPass = '', newPass = '', confirmNewPass = '';
   final _key = GlobalKey<FormState>();
+  late AuthViewModel _model;
+
+  void submit() async {
+    final isValid = _key.currentState?.validate();
+    if (isValid == null || !isValid) {
+      return;
+    }
+    _key.currentState!.save();
+    final result = await _model.updatePassword(
+      oldPass,
+      newPass,
+      confirmNewPass,
+    );
+    if (result) {
+      Navigator.of(context).pop();
+      showSuccessSnackbar('Password updated!', context);
+    } else {
+      showErrorSnackbar(_model.errorMessage, context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    _model = Provider.of<AuthViewModel>(context);
     return WillPopScope(
       onWillPop: () async {
         if (WidgetsBinding.instance.window.viewInsets.bottom > 0.0) {
@@ -138,13 +163,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         ),
                         SizedBox(height: SizeConfig.blockSizeVertical * 2),
                         ElevatedButton(
-                          onPressed: () {},
-                          child: Text(
-                            'SAVE',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: SizeConfig.blockSizeVertical * 2.3),
-                          ),
+                          onPressed: () {
+                            if (_model.state == ViewState.idle) {
+                              submit();
+                            }
+                          },
+                          child: _model.state == ViewState.idle
+                              ? Text(
+                                  'SAVE',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          SizeConfig.blockSizeVertical * 2.3),
+                                )
+                              : SizedBox(
+                                  height: SizeConfig.blockSizeVertical * 2.3,
+                                  child: const CircularProgressIndicator(
+                                      color: Colors.white)),
                         ),
                         // const Spacer(),
                       ],

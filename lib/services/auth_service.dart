@@ -77,4 +77,32 @@ class AuthService {
       return null;
     }
   }
+
+  Future<Map<String, dynamic>> changePassword(
+      String id, String oldPw, String newPw, String confirmPw) async {
+    try {
+      final result = await dio.post('${BASE_URL}auth/change-password',
+          data: {
+            'oldPassword': oldPw,
+            'newPassword': newPw,
+            'confirmPassword': confirmPw,
+            'userId': id
+          },
+          options: Options(contentType: 'application/json'));
+      if (result.statusCode == 200) {
+        return {
+          'status': 200,
+          'message': 'Password Updated!',
+        };
+      } else {
+        return {
+          'status': result.statusCode,
+          'message': result.data['message'] ?? 'Some error occurred',
+        };
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+      return {'status': 500, 'message': 'Some error occurred'};
+    }
+  }
 }

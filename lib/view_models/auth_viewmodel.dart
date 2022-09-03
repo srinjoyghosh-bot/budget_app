@@ -55,4 +55,18 @@ class AuthViewModel extends BaseViewModel {
       return false;
     }
   }
+
+  Future<bool> updatePassword(
+      String oldPw, String newPw, String confirmPw) async {
+    setState(ViewState.busy);
+    final result = await _authService.changePassword(
+        _storageService.currentUserId, oldPw, newPw, confirmPw);
+    if (result['status'] == 200) {
+      setState(ViewState.idle);
+      return true;
+    }
+    setState(ViewState.idle);
+    setErrorMessage(result['message']);
+    return false;
+  }
 }
