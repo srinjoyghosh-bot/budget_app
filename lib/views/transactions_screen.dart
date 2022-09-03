@@ -1,4 +1,3 @@
-import 'package:budget_app/constants/enums.dart';
 import 'package:budget_app/size_config.dart';
 import 'package:budget_app/view_models/main_viewmodel.dart';
 import 'package:budget_app/views/widgets/transaction_tile.dart';
@@ -6,6 +5,7 @@ import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../constants/enums.dart';
 import '../styles.dart';
 
 class TransactionsScreen extends StatefulWidget {
@@ -25,6 +25,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
   @override
   void initState() {
+    print('initstate');
     Future.delayed(Duration.zero).then((value) {
       getTransactions(DateTime.now());
     });
@@ -68,15 +69,19 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   : _model.body!.isEmpty
                       ? Center(
                           child: Text(
-                            'No transactions today',
+                            'No transactions on this day',
                             style: TextStyle(
                                 fontSize: SizeConfig.blockSizeVertical * 2.5),
                           ),
                         )
-                      : ListView.builder(
-                          itemBuilder: (context, index) =>
-                              TransactionTile(transaction: _model.body![index]),
-                          itemCount: _model.body!.length,
+                      : Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: SizeConfig.blockSizeHorizontal * 5),
+                          child: ListView.builder(
+                            itemBuilder: (context, index) => TransactionTile(
+                                transaction: _model.body![index]),
+                            itemCount: _model.body!.length,
+                          ),
                         ))
         ],
       ),

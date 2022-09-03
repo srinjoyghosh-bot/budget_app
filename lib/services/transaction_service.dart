@@ -16,6 +16,7 @@ class TransactionService {
       final result = await dio.get('${BASE_URL}transactions/get/$id',
           options: Options(headers: {'Content-Type': 'application/json'}),
           queryParameters: {'date': getFormattedTime(date)});
+      print(getFormattedTime(date));
       if (result.statusCode == 200) {
         return List<Transaction>.from(result.data['transactions']
             .map((transaction) => Transaction.fromJson(transaction)));
