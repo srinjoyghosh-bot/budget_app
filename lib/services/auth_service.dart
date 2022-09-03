@@ -105,4 +105,30 @@ class AuthService {
       return {'status': 500, 'message': 'Some error occurred'};
     }
   }
+
+  Future<Map<String, dynamic>> changeBudget(String id, String budget) async {
+    try {
+      final result = await dio.post('${BASE_URL}auth/update-budget',
+          data: {'budget': budget, 'userId': id},
+          options: Options(contentType: 'application/json'));
+      print(result.data);
+      if (result.statusCode == 200) {
+        return {
+          'status': 200,
+          'message': 'Budget Updated!',
+        };
+      } else {
+        return {
+          'status': result.statusCode,
+          'message': result.data['message'] ?? 'Some error occurred',
+        };
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+      return {
+        'status': 500,
+        'message': 'Some error occurred',
+      };
+    }
+  }
 }

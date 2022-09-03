@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // const ExpenditureSummaryTile(),
           (user != null && transactions != null)
               ? HomeExpenditureTile(
-                  budget: user.budget,
+                  budget: _model.budget!,
                   spent: '2000',
                 )
               : Container(),

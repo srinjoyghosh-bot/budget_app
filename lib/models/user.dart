@@ -15,6 +15,10 @@ class User {
     this.transactions,
   });
 
+  updateBudget(String amount) {
+    budget = amount;
+  }
+
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json['_id'],
         name: json['username'],

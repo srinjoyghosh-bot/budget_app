@@ -16,9 +16,15 @@ class MainViewModel extends BaseViewModel {
   List<Transaction>? _todaysTransactions;
   List<Transaction>? _transactionsBody;
   DateTime _selectedDate = DateTime.now();
+  String _budget = '0';
 
   setUser(User userData) {
     _user = userData;
+    notifyListeners();
+  }
+
+  setBudget(String budget) {
+    _budget = budget;
     notifyListeners();
   }
 
@@ -48,6 +54,8 @@ class MainViewModel extends BaseViewModel {
 
   User? get user => _user;
 
+  String? get budget => _budget;
+
   List<Transaction>? get today => [...?_todaysTransactions];
 
   List<Transaction>? get body => [...?_transactionsBody];
@@ -59,6 +67,7 @@ class MainViewModel extends BaseViewModel {
     final result = await _authService.getProfile(id);
     if (result != null) {
       setUser(result);
+      setBudget(result.budget);
       return true;
     } else {
       return false;
@@ -96,6 +105,20 @@ class MainViewModel extends BaseViewModel {
     }
     setErrorMessage(result['message']);
     setState(ViewState.idle);
+    return false;
+  }
+
+  Future<bool> updatedBudget(String budget) async {
+    setState(ViewState.busy);
+    final result =
+        await _authService.changeBudget(_storageService.currentUserId, budget);
+    if (result['status'] == 200) {
+      setBudget(budget);
+      setState(ViewState.idle);
+      return true;
+    }
+    setState(ViewState.idle);
+    setErrorMessage(result['message']);
     return false;
   }
 }

@@ -1,5 +1,9 @@
+import 'package:budget_app/constants/enums.dart';
 import 'package:budget_app/styles.dart';
+import 'package:budget_app/util/snackbars.dart';
+import 'package:budget_app/view_models/main_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../size_config.dart';
 
@@ -13,9 +17,29 @@ class EditBudgetScreen extends StatefulWidget {
 
 class _EditBudgetScreenState extends State<EditBudgetScreen> {
   final TextEditingController _controller = TextEditingController();
+  late MainViewModel _model;
+
+  void submit() async {
+    final text = _controller.text;
+    if (text.trim().isEmpty) {
+      showErrorSnackbar('Give a budget', context);
+      return;
+    } else if (double.tryParse(_controller.text) == null) {
+      showErrorSnackbar('Please enter a number', context);
+      return;
+    }
+    final result = await _model.updatedBudget(_controller.text.trim());
+    if (result) {
+      Navigator.of(context).pop();
+      showSuccessSnackbar('Budget updated', context);
+    } else {
+      showErrorSnackbar(_model.errorMessage, context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    _model = Provider.of<MainViewModel>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Budget'),
@@ -55,13 +79,24 @@ class _EditBudgetScreenState extends State<EditBudgetScreen> {
               ),
               SizedBox(height: SizeConfig.blockSizeVertical * 3),
               ElevatedButton(
-                  onPressed: () {},
-                  child: Text(
-                    'SAVE',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: SizeConfig.blockSizeVertical * 2.5),
-                  ))
+                  onPressed: () {
+                    if (_model.state == ViewState.idle) {
+                      submit();
+                    }
+                  },
+                  child: _model.state == ViewState.idle
+                      ? Text(
+                          'SAVE',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: SizeConfig.blockSizeVertical * 2.5),
+                        )
+                      : SizedBox(
+                          height: SizeConfig.blockSizeVertical * 2.5,
+                          child: const CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        ))
             ],
           ),
         ),
