@@ -1,6 +1,10 @@
+import 'package:budget_app/constants/enums.dart';
 import 'package:budget_app/size_config.dart';
+import 'package:budget_app/view_models/main_viewmodel.dart';
+import 'package:budget_app/views/widgets/transaction_tile.dart';
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../styles.dart';
 
@@ -12,10 +16,26 @@ class TransactionsScreen extends StatefulWidget {
 }
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
+  late MainViewModel _model;
+
+  void getTransactions(DateTime date) async {
+    _model.setSelectedDate(date);
+    await _model.fetchBodyTransactions(date);
+  }
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) {
+      getTransactions(DateTime.now());
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    _model = Provider.of<MainViewModel>(context);
     return Scaffold(
-      backgroundColor: brandColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
@@ -26,11 +46,38 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         children: [
           SizedBox(height: SizeConfig.blockSizeVertical * 0.4),
           CalendarTimeline(
-            initialDate: DateTime.now(),
-            firstDate: DateTime(DateTime.now().year),
-            lastDate: DateTime.now(),
-            onDateSelected: (date) => print(date),
+            initialDate: _model.selectedDate,
+            firstDate: DateTime.now().subtract(const Duration(days: 90)),
+            lastDate: DateTime.now().add(const Duration(days: 90)),
+            onDateSelected: getTransactions,
+            leftMargin: 20,
+            monthColor: Colors.blueGrey,
+            dayColor: brandColor,
+            activeDayColor: Colors.white,
+            activeBackgroundDayColor: brandColor,
+            dotsColor: const Color(0xFF333A47),
+            locale: 'en_ISO',
           ),
+          Expanded(
+              child: (_model.body == null || _model.state == ViewState.busy)
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: brandColor,
+                      ),
+                    )
+                  : _model.body!.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No transactions today',
+                            style: TextStyle(
+                                fontSize: SizeConfig.blockSizeVertical * 2.5),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemBuilder: (context, index) =>
+                              TransactionTile(transaction: _model.body![index]),
+                          itemCount: _model.body!.length,
+                        ))
         ],
       ),
       // body: Column(
