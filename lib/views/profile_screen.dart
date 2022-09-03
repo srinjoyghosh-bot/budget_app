@@ -1,9 +1,11 @@
 import 'package:budget_app/size_config.dart';
 import 'package:budget_app/styles.dart';
+import 'package:budget_app/view_models/auth_viewmodel.dart';
 import 'package:budget_app/views/edit_budget_screen.dart';
 import 'package:budget_app/views/login_screen.dart';
 import 'package:budget_app/views/widgets/profile_screen_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'change_password_screen.dart';
 
@@ -72,6 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: 'Log Out',
             icon: const Icon(Icons.logout),
             onTap: () {
+              Provider.of<AuthViewModel>(context, listen: false).logout();
               Navigator.of(context).pushReplacementNamed(LoginScreen.id);
             },
           ),

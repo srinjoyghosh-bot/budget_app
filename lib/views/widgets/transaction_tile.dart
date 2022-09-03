@@ -1,10 +1,12 @@
+import 'package:budget_app/models/transaction.dart';
 import 'package:flutter/material.dart';
 
 import '../../size_config.dart';
 
 class TransactionTile extends StatelessWidget {
-  const TransactionTile({Key? key}) : super(key: key);
-
+  const TransactionTile({Key? key, required this.transaction})
+      : super(key: key);
+  final Transaction transaction;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,11 +31,14 @@ class TransactionTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Chapo ',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: SizeConfig.blockSizeVertical * 2.2)),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(transaction.title,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: SizeConfig.blockSizeVertical * 2.2)),
+              ),
               SizedBox(height: SizeConfig.blockSizeVertical * 0.5),
               Text('Food 22/2/21',
                   style: TextStyle(
@@ -43,7 +48,7 @@ class TransactionTile extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          Text('Rs 450',
+          Text('Rs ${transaction.amount}',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.green,

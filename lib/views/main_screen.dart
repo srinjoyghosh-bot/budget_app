@@ -1,10 +1,12 @@
 import 'package:budget_app/size_config.dart';
 import 'package:budget_app/styles.dart';
+import 'package:budget_app/view_models/main_viewmodel.dart';
 import 'package:budget_app/views/add_transaction_screen.dart';
 import 'package:budget_app/views/profile_screen.dart';
 import 'package:budget_app/views/stats_screen.dart';
 import 'package:budget_app/views/transactions_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'home_screen.dart';
 
@@ -18,6 +20,20 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int page = 0;
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) {
+      fetch();
+    });
+    super.initState();
+  }
+
+  void fetch() async {
+    final model = Provider.of<MainViewModel>(context, listen: false);
+    await model.fetchProfile();
+    await model.fetchTodayTransactions();
+  }
 
   void onTapped(int index) {
     setState(() {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:budget_app/constants/constants.dart';
+import 'package:budget_app/models/user.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -59,6 +60,21 @@ class AuthService {
         'status': 500,
         'message': 'Some error occurred. Please try again',
       };
+    }
+  }
+
+  Future<User?> getProfile(String id) async {
+    try {
+      final result = await dio.get('${BASE_URL}auth/profile/$id');
+      if (result.statusCode == 200) {
+        final user = User.fromJson(result.data['user']);
+        return user;
+      } else {
+        return null;
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+      return null;
     }
   }
 }
