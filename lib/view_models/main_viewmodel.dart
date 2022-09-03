@@ -37,6 +37,15 @@ class MainViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  addTransaction(Transaction transaction) {
+    if (_todaysTransactions == null) {
+      _todaysTransactions = [transaction];
+    } else {
+      _todaysTransactions!.add(transaction);
+    }
+    notifyListeners();
+  }
+
   User? get user => _user;
 
   List<Transaction>? get today => [...?_todaysTransactions];
@@ -72,5 +81,21 @@ class MainViewModel extends BaseViewModel {
     setBody(result);
     setState(ViewState.idle);
     return result;
+  }
+
+  Future<bool> createTransaction(String title, String amount,
+      TransactionType type, TransactionCategory category) async {
+    setState(ViewState.busy);
+    final result = await _transactionService.create(
+        title, amount, type, category, _storageService.currentUserId);
+    if (result['status'] == 200) {
+      final transaction = result['transaction'];
+      addTransaction(transaction);
+      setState(ViewState.idle);
+      return true;
+    }
+    setErrorMessage(result['message']);
+    setState(ViewState.idle);
+    return false;
   }
 }

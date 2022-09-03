@@ -20,7 +20,7 @@ class Transaction {
   factory Transaction.fromJson(Map<String, dynamic> json) => Transaction(
         id: json['_id'],
         title: json['title'],
-        amount: json['amount'],
+        amount: double.tryParse(json['amount']) ?? 0,
         type: getType(json['t_type']),
         category: getCategory(json['t_category']),
         createdAt: json['createdAt'],

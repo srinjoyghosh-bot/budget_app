@@ -1,4 +1,7 @@
+import 'package:budget_app/constants/enums.dart';
 import 'package:budget_app/models/transaction.dart';
+import 'package:budget_app/util/time.dart';
+import 'package:budget_app/util/transactions.dart';
 import 'package:flutter/material.dart';
 
 import '../../size_config.dart';
@@ -7,6 +10,20 @@ class TransactionTile extends StatelessWidget {
   const TransactionTile({Key? key, required this.transaction})
       : super(key: key);
   final Transaction transaction;
+
+  String getImageAsset(TransactionCategory category) {
+    switch (category) {
+      case TransactionCategory.food:
+        return 'assets/icons/hamburger.png';
+      case TransactionCategory.clothes:
+        return 'assets/icons/shirt.png';
+      case TransactionCategory.travel:
+        return 'assets/icons/taxi.png';
+      case TransactionCategory.miscellaneous:
+        return 'assets/icons/miscellaneous.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,7 +41,7 @@ class TransactionTile extends StatelessWidget {
           SizedBox(
             width: SizeConfig.blockSizeHorizontal * 10,
             height: SizeConfig.blockSizeHorizontal * 10,
-            child: Image.asset('assets/icons/hamburger.png'),
+            child: Image.asset(getImageAsset(transaction.category)),
           ),
           SizedBox(width: SizeConfig.blockSizeHorizontal * 4),
           Column(
@@ -40,7 +57,8 @@ class TransactionTile extends StatelessWidget {
                         fontSize: SizeConfig.blockSizeVertical * 2.2)),
               ),
               SizedBox(height: SizeConfig.blockSizeVertical * 0.5),
-              Text('Food 22/2/21',
+              Text(
+                  '${getCategoryString(transaction.category)} ${getDateFromString(transaction.createdAt)}',
                   style: TextStyle(
                       // fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -48,11 +66,16 @@ class TransactionTile extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          Text('Rs ${transaction.amount}',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                  fontSize: SizeConfig.blockSizeVertical * 2.5))
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text('Rs ${transaction.amount}',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: transaction.type == TransactionType.receive
+                        ? Colors.green
+                        : Colors.red,
+                    fontSize: SizeConfig.blockSizeVertical * 2.5)),
+          )
         ],
       ),
     );
