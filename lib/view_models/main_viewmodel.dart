@@ -15,6 +15,9 @@ class MainViewModel extends BaseViewModel {
   User? _user;
   List<Transaction>? _todaysTransactions;
   List<Transaction>? _transactionsBody;
+  List<Transaction>? _monthlyTransactions;
+  double _total = 0, _food = 0, _clothes = 0, _travel = 0, _miscellaneous = 0;
+
   DateTime _selectedDate = DateTime.now();
   String _budget = '0';
 
@@ -49,6 +52,29 @@ class MainViewModel extends BaseViewModel {
     } else {
       _todaysTransactions!.add(transaction);
     }
+    if (_monthlyTransactions == null) {
+      _monthlyTransactions = [transaction];
+    } else {
+      _monthlyTransactions!.add(transaction);
+    }
+    _total += transaction.amount;
+    switch (transaction.category) {
+      case TransactionCategory.food:
+        _food += transaction.amount;
+        break;
+      case TransactionCategory.clothes:
+        _clothes += transaction.amount;
+        break;
+      case TransactionCategory.travel:
+        _travel += transaction.amount;
+        break;
+      case TransactionCategory.miscellaneous:
+        _miscellaneous += transaction.amount;
+        break;
+      default:
+        _miscellaneous += transaction.amount;
+        break;
+    }
     notifyListeners();
   }
 
@@ -60,7 +86,19 @@ class MainViewModel extends BaseViewModel {
 
   List<Transaction>? get body => [...?_transactionsBody];
 
+  List<Transaction>? get monthly => [...?_monthlyTransactions];
+
   DateTime get selectedDate => _selectedDate;
+
+  double get total => _total;
+
+  double get food => _food;
+
+  double get clothes => _clothes;
+
+  double get travel => _travel;
+
+  double get miscellaneous => _miscellaneous;
 
   Future<bool> fetchProfile() async {
     String id = _storageService.currentUserId;
@@ -119,6 +157,23 @@ class MainViewModel extends BaseViewModel {
     }
     setState(ViewState.idle);
     setErrorMessage(result['message']);
+    return false;
+  }
+
+  Future<bool> fetchStats() async {
+    String id = _storageService.currentUserId;
+    final result = await _transactionService.getStats(id);
+    if (result['status'] == 200) {
+      final stats = result['stats'];
+      _total = stats.total;
+      _food = stats.food;
+      _clothes = stats.clothes;
+      _travel = stats.travel;
+      _miscellaneous = stats.miscellaneous;
+      _monthlyTransactions = stats.transactions;
+      return true;
+    }
+
     return false;
   }
 }

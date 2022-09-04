@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _model = Provider.of<MainViewModel>(context);
     final user = _model.user;
     final transactions = _model.today;
+    final totalSpent = _model.total;
     return Scaffold(
       backgroundColor: brandColor,
       appBar: AppBar(
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
           (user != null && transactions != null)
               ? HomeExpenditureTile(
                   budget: _model.budget!,
-                  spent: '2000',
+                  spent: totalSpent.toStringAsFixed(2),
                 )
               : Container(),
           SizedBox(height: SizeConfig.blockSizeVertical * 2),

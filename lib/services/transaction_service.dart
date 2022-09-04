@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:budget_app/constants/constants.dart';
 import 'package:budget_app/constants/enums.dart';
 import 'package:budget_app/models/transaction.dart';
+import 'package:budget_app/models/transaction_stats.dart';
 import 'package:budget_app/util/time.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class TransactionService {
       final result = await dio.get('${BASE_URL}transactions/get/$id',
           options: Options(headers: {'Content-Type': 'application/json'}),
           queryParameters: {'date': getFormattedTime(date)});
-      print(getFormattedTime(date));
+      // print(getFormattedTime(date));
       if (result.statusCode == 200) {
         return List<Transaction>.from(result.data['transactions']
             .map((transaction) => Transaction.fromJson(transaction)));
@@ -58,6 +59,31 @@ class TransactionService {
       return {
         'status': 500,
         'message': 'Some error occured',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> getStats(String id) async {
+    try {
+      final result = await dio.get('${BASE_URL}transactions/stats/$id',
+          options: Options(contentType: 'application/json'));
+      if (result.statusCode == 200) {
+        final stats = TransactionStats.fromJson(result.data);
+        return {
+          'status': 200,
+          'stats': stats,
+        };
+      } else {
+        return {
+          'status': result.statusCode,
+          'message': 'Could not fetch stats',
+        };
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+      return {
+        'status': 500,
+        'message': 'Could not fetch stats',
       };
     }
   }

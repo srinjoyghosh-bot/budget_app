@@ -33,6 +33,7 @@ class _MainScreenState extends State<MainScreen> {
     final model = Provider.of<MainViewModel>(context, listen: false);
     await model.fetchProfile();
     await model.fetchTodayTransactions();
+    await model.fetchStats();
   }
 
   void onTapped(int index) {
