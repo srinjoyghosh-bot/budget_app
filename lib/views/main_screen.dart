@@ -19,7 +19,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int page = 0;
+  late MainViewModel _model;
 
   @override
   void initState() {
@@ -37,15 +37,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void onTapped(int index) {
-    setState(() {
-      page = index;
-    });
-  }
-
-  void moveToTransactionPage() {
-    setState(() {
-      page = 1;
-    });
+    _model.setPage(index);
   }
 
   List<Widget> pages = [
@@ -57,9 +49,10 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _model = Provider.of<MainViewModel>(context);
     SizeConfig().init(context);
     return Scaffold(
-      body: pages[page],
+      body: pages[_model.index],
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -79,121 +72,47 @@ class _MainScreenState extends State<MainScreen> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    iconSize: page == 0
-                        ? SizeConfig.blockSizeVertical * 3.5
-                        : SizeConfig.blockSizeVertical * 4.5,
-                    icon: const Icon(
-                      Icons.home,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      onTapped(0);
-                    },
-                  ),
-                  if (page == 0)
-                    Text(
-                      'Home',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: SizeConfig.blockSizeVertical * 2),
-                    ),
-                  SizedBox(height: SizeConfig.blockSizeVertical),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    iconSize: page == 1
-                        ? SizeConfig.blockSizeVertical * 3.5
-                        : SizeConfig.blockSizeVertical * 4.5,
-                    icon: const Icon(
-                      Icons.menu,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      onTapped(1);
-                    },
-                  ),
-                  if (page == 1)
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        'Transactions',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: SizeConfig.blockSizeVertical * 2),
-                      ),
-                    ),
-                  SizedBox(height: SizeConfig.blockSizeVertical),
-                ],
-              ),
-            ),
+            bottomNavBarItem(0, Icons.home, 'Home'),
+            bottomNavBarItem(1, Icons.menu, 'Transactions'),
             const Expanded(child: SizedBox()),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    iconSize: page == 2
-                        ? SizeConfig.blockSizeVertical * 3.5
-                        : SizeConfig.blockSizeVertical * 4.5,
-                    icon: const Icon(
-                      Icons.stacked_bar_chart,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      onTapped(2);
-                    },
-                  ),
-                  if (page == 2)
-                    Text(
-                      'Stats',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: SizeConfig.blockSizeVertical * 2),
-                    ),
-                  SizedBox(height: SizeConfig.blockSizeVertical),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    iconSize: page == 3
-                        ? SizeConfig.blockSizeVertical * 3.5
-                        : SizeConfig.blockSizeVertical * 4.5,
-                    icon: const Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      onTapped(3);
-                    },
-                  ),
-                  if (page == 3)
-                    Text(
-                      'Profile',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: SizeConfig.blockSizeVertical * 2),
-                    ),
-                  SizedBox(height: SizeConfig.blockSizeVertical),
-                ],
-              ),
-            ),
+            bottomNavBarItem(2, Icons.stacked_bar_chart, 'Stats'),
+            bottomNavBarItem(3, Icons.person, 'Profile'),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget bottomNavBarItem(int index, IconData icon, String title) {
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            iconSize: _model.index == index
+                ? SizeConfig.blockSizeVertical * 3.5
+                : SizeConfig.blockSizeVertical * 4.5,
+            icon: Icon(
+              icon,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              onTapped(index);
+            },
+          ),
+          if (_model.index == index)
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                title,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: SizeConfig.blockSizeVertical * 2),
+              ),
+            ),
+          SizedBox(height: SizeConfig.blockSizeVertical),
+        ],
       ),
     );
   }

@@ -17,6 +17,7 @@ class MainViewModel extends BaseViewModel {
   List<Transaction>? _transactionsBody;
   List<Transaction>? _monthlyTransactions;
   double _total = 0, _food = 0, _clothes = 0, _travel = 0, _miscellaneous = 0;
+  int pageIndex = 0;
 
   DateTime _selectedDate = DateTime.now();
   String _budget = '0';
@@ -43,6 +44,11 @@ class MainViewModel extends BaseViewModel {
 
   setSelectedDate(DateTime date) {
     _selectedDate = date;
+    notifyListeners();
+  }
+
+  setPage(int index) {
+    pageIndex = index;
     notifyListeners();
   }
 
@@ -99,6 +105,8 @@ class MainViewModel extends BaseViewModel {
   double get travel => _travel;
 
   double get miscellaneous => _miscellaneous;
+
+  int get index => pageIndex;
 
   Future<bool> fetchProfile() async {
     String id = _storageService.currentUserId;

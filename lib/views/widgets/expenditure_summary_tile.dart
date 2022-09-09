@@ -3,7 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class ExpenditureSummaryTile extends StatelessWidget {
-  const ExpenditureSummaryTile({Key? key}) : super(key: key);
+  const ExpenditureSummaryTile(
+      {Key? key,
+      required this.total,
+      required this.food,
+      required this.clothes,
+      required this.miscellaneous,
+      required this.travel})
+      : super(key: key);
+  final double total, food, clothes, travel, miscellaneous;
 
   @override
   Widget build(BuildContext context) {
@@ -29,73 +37,24 @@ class ExpenditureSummaryTile extends StatelessWidget {
           // ),
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(
-              'Total Spent this month: Rs 2000',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: SizeConfig.blockSizeVertical * 2.7),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                'Total Spent this month: Rs $total',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: SizeConfig.blockSizeVertical * 2.7),
+              ),
             ),
           ),
           SizedBox(height: SizeConfig.blockSizeVertical * 2),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              CircularPercentIndicator(
-                radius: SizeConfig.blockSizeVertical * 4,
-                lineWidth: 5.0,
-                animation: true,
-                percent: 0.7,
-                center: Text(
-                  "70.0%",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: SizeConfig.blockSizeVertical * 1.6),
-                ),
-                footer:  Text(
-                  "Food",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: SizeConfig.blockSizeVertical * 1.9),
-                ),
-                circularStrokeCap: CircularStrokeCap.round,
-                progressColor: Colors.purple,
-              ),
-              CircularPercentIndicator(
-                radius: SizeConfig.blockSizeVertical * 4,
-                lineWidth: 5.0,
-                animation: true,
-                percent: 0.1,
-                center: Text(
-                  "10.0%",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: SizeConfig.blockSizeVertical * 1.6),
-                ),
-                footer:  Text(
-                  "Stationary",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: SizeConfig.blockSizeVertical * 1.9),
-                ),
-                circularStrokeCap: CircularStrokeCap.round,
-                progressColor: Colors.yellow,
-              ),
-              CircularPercentIndicator(
-                radius: SizeConfig.blockSizeVertical * 4,
-                lineWidth: 5.0,
-                animation: true,
-                percent: 0.2,
-                center: Text(
-                  "20.0%",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: SizeConfig.blockSizeVertical * 1.6),
-                ),
-                footer: Text(
-                  "Miscellaneous",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: SizeConfig.blockSizeVertical * 1.9),
-                ),
-                circularStrokeCap: CircularStrokeCap.round,
-                progressColor: Colors.teal,
-              ),
+              circularIndicator(food, Colors.purple, 'Food'),
+              circularIndicator(clothes, Colors.yellow, 'Clothes'),
+              circularIndicator(travel, Colors.blueAccent, 'Travel'),
+              circularIndicator(miscellaneous, Colors.teal, 'Miscellaneous')
             ],
           ),
           // SfCircularChart(
@@ -114,6 +73,36 @@ class ExpenditureSummaryTile extends StatelessWidget {
           // )
         ],
       ),
+    );
+  }
+
+  Widget circularIndicator(double value, Color color, String title) {
+    return CircularPercentIndicator(
+      radius: SizeConfig.blockSizeVertical * 4,
+      lineWidth: 5.0,
+      animation: true,
+      percent: total == 0
+          ? 0
+          : (value / total) > 1
+              ? 1
+              : (value / total),
+      center: Text(
+        "${((total == 0 ? 0 : value / total) * 100).toStringAsFixed(1)}%",
+        style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: SizeConfig.blockSizeVertical * 1.6),
+      ),
+      footer: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          title,
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: SizeConfig.blockSizeVertical * 1.9),
+        ),
+      ),
+      circularStrokeCap: CircularStrokeCap.round,
+      progressColor: color,
     );
   }
 }

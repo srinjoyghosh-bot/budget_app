@@ -19,6 +19,13 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   late MainViewModel _model;
 
   void getTransactions(DateTime date) async {
+    final today = DateTime.now();
+    if (today.year == date.year &&
+        today.month == date.month &&
+        today.day == date.day) {
+      _model.setBody(_model.today ?? []);
+      return;
+    }
     _model.setSelectedDate(date);
     await _model.fetchBodyTransactions(date);
   }
