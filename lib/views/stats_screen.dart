@@ -29,18 +29,6 @@ class _StatsScreenState extends State<StatsScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(height: SizeConfig.blockSizeVertical * 0.4),
-          // Expanded(
-          //     child: Container(
-          //   width: double.infinity,
-          //   decoration: const BoxDecoration(
-          //     borderRadius: BorderRadius.only(
-          //         topLeft: Radius.circular(16), topRight: Radius.circular(16)),
-          //     color: Colors.white,
-          //   ),
-          //   padding: EdgeInsets.symmetric(
-          //       horizontal: SizeConfig.blockSizeHorizontal * 5),
-          // )),
           ExpenditureSummaryTile(
             total: _model.total,
             food: _model.food,

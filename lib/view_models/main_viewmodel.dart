@@ -56,12 +56,12 @@ class MainViewModel extends BaseViewModel {
     if (_todaysTransactions == null) {
       _todaysTransactions = [transaction];
     } else {
-      _todaysTransactions!.add(transaction);
+      _todaysTransactions!.insert(0, transaction);
     }
     if (_monthlyTransactions == null) {
       _monthlyTransactions = [transaction];
     } else {
-      _monthlyTransactions!.add(transaction);
+      _monthlyTransactions!.insert(0, transaction);
     }
     _total += transaction.amount;
     switch (transaction.category) {
