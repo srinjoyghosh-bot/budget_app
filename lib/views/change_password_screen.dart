@@ -1,5 +1,5 @@
 import 'package:budget_app/constants/enums.dart';
-import 'package:budget_app/util/snackbars.dart';
+import 'package:budget_app/util/toasts.dart';
 import 'package:budget_app/view_models/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,9 +32,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     );
     if (result) {
       Navigator.of(context).pop();
-      showSuccessSnackbar('Password updated!', context);
+      showSuccessToast('Password updated!', context);
     } else {
-      showErrorSnackbar(_model.errorMessage, context);
+      showErrorToast(_model.errorMessage, context);
     }
   }
 

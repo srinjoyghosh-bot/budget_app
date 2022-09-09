@@ -1,6 +1,7 @@
 import 'package:budget_app/constants/enums.dart';
-import 'package:budget_app/util/snackbars.dart';
+import 'package:budget_app/util/toasts.dart';
 import 'package:budget_app/view_models/auth_viewmodel.dart';
+import 'package:budget_app/view_models/main_viewmodel.dart';
 import 'package:budget_app/views/main_screen.dart';
 import 'package:budget_app/views/signup_screen.dart';
 import 'package:flutter/material.dart';
@@ -30,9 +31,10 @@ class _LoginScreenState extends State<LoginScreen> {
     _key.currentState?.save();
     final result = await _model.login(email, password);
     if (result) {
+      Provider.of<MainViewModel>(context, listen: false).setPage(0);
       Navigator.of(context).pushReplacementNamed(MainScreen.id);
     } else {
-      showErrorSnackbar(_model.errorMessage, context);
+      showErrorToast(_model.errorMessage, context);
     }
   }
 
@@ -126,6 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: ElevatedButton(
                         onPressed: () {
                           if (_model.state == ViewState.idle) {
+                            FocusScope.of(context).requestFocus(FocusNode());
                             submit();
                           }
                         },

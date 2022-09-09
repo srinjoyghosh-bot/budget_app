@@ -1,5 +1,5 @@
 import 'package:budget_app/constants/enums.dart';
-import 'package:budget_app/util/snackbars.dart';
+import 'package:budget_app/util/toasts.dart';
 import 'package:budget_app/view_models/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,9 +29,9 @@ class _SignupScreenState extends State<SignupScreen> {
     _key.currentState?.save();
     final status = await _model.signup(email, password, username, budget);
     if (status) {
-      showSuccessSnackbar('Account created', context);
+      showSuccessToast('Account created', context);
     } else {
-      showErrorSnackbar('Some error occured', context);
+      showErrorToast('Some error occured', context);
     }
   }
 

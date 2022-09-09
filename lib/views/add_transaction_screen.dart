@@ -1,6 +1,6 @@
 import 'package:budget_app/constants/enums.dart';
 import 'package:budget_app/size_config.dart';
-import 'package:budget_app/util/snackbars.dart';
+import 'package:budget_app/util/toasts.dart';
 import 'package:budget_app/view_models/main_viewmodel.dart';
 import 'package:budget_app/views/main_screen.dart';
 import 'package:flutter/material.dart';
@@ -33,9 +33,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         title, amount, selectedType, selectedCategory);
     if (result) {
       Navigator.of(context).pushReplacementNamed(MainScreen.id);
-      showSuccessSnackbar('Transaction added!', context);
+      showSuccessToast('Transaction added!', context);
     } else {
-      showErrorSnackbar(_model.errorMessage, context);
+      showErrorToast(_model.errorMessage, context);
     }
   }
 

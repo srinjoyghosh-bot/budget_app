@@ -1,6 +1,6 @@
 import 'package:budget_app/constants/enums.dart';
 import 'package:budget_app/styles.dart';
-import 'package:budget_app/util/snackbars.dart';
+import 'package:budget_app/util/toasts.dart';
 import 'package:budget_app/view_models/main_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,18 +22,18 @@ class _EditBudgetScreenState extends State<EditBudgetScreen> {
   void submit() async {
     final text = _controller.text;
     if (text.trim().isEmpty) {
-      showErrorSnackbar('Give a budget', context);
+      showWarningToast('Give a budget', context);
       return;
     } else if (double.tryParse(_controller.text) == null) {
-      showErrorSnackbar('Please enter a number', context);
+      showWarningToast('Please enter a number', context);
       return;
     }
     final result = await _model.updatedBudget(_controller.text.trim());
     if (result) {
       Navigator.of(context).pop();
-      showSuccessSnackbar('Budget updated', context);
+      showSuccessToast('Budget updated', context);
     } else {
-      showErrorSnackbar(_model.errorMessage, context);
+      showErrorToast(_model.errorMessage, context);
     }
   }
 
