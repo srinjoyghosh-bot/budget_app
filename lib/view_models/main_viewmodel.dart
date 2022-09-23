@@ -1,5 +1,6 @@
 import 'package:budget_app/constants/enums.dart';
 import 'package:budget_app/models/transaction.dart';
+import 'package:budget_app/models/transaction_history.dart';
 import 'package:budget_app/services/transaction_service.dart';
 import 'package:budget_app/view_models/base_viewmodel.dart';
 
@@ -16,6 +17,7 @@ class MainViewModel extends BaseViewModel {
   List<Transaction>? _todaysTransactions;
   List<Transaction>? _transactionsBody;
   List<Transaction>? _monthlyTransactions;
+  List<TransactionHistory>? _history;
   double _total = 0, _food = 0, _clothes = 0, _travel = 0, _miscellaneous = 0;
   int pageIndex = 0;
 
@@ -93,6 +95,8 @@ class MainViewModel extends BaseViewModel {
   List<Transaction>? get body => [...?_transactionsBody];
 
   List<Transaction>? get monthly => [...?_monthlyTransactions];
+
+  List<TransactionHistory>? get history => [...?_history];
 
   DateTime get selectedDate => _selectedDate;
 
@@ -182,6 +186,16 @@ class MainViewModel extends BaseViewModel {
       return true;
     }
 
+    return false;
+  }
+
+  Future<bool> fetchHistory() async {
+    String id = _storageService.currentUserId;
+    final result = await _transactionService.history(id);
+    if (result['status'] == 200) {
+      _history = result['history'];
+      return true;
+    }
     return false;
   }
 }

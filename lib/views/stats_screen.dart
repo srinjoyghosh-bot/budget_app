@@ -1,5 +1,6 @@
 import 'package:budget_app/view_models/main_viewmodel.dart';
 import 'package:budget_app/views/widgets/expenditure_summary_tile.dart';
+import 'package:budget_app/views/widgets/transaction_history_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -47,6 +48,57 @@ class _StatsScreenState extends State<StatsScreen> {
             ),
             padding: EdgeInsets.symmetric(
                 horizontal: SizeConfig.blockSizeHorizontal * 5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: SizeConfig.blockSizeVertical * 2),
+                Text(
+                  'History',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: SizeConfig.blockSizeVertical * 3),
+                ),
+                SizedBox(height: SizeConfig.blockSizeVertical * 2),
+                _model.history == null
+                    ? const CircularProgressIndicator()
+                    : _model.history!.isEmpty
+                        ? Expanded(
+                            child: Center(
+                              child: Text(
+                                'No transactions in previous months',
+                                style: TextStyle(
+                                    fontSize:
+                                        SizeConfig.blockSizeVertical * 2.5),
+                              ),
+                            ),
+                          )
+                        : Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      SizeConfig.blockSizeHorizontal * 5),
+                              child: ListView.builder(
+                                itemBuilder: (context, index) =>
+                                    TransactionHistoryTile(
+                                  budget: _model.budget ?? '0',
+                                  transaction: _model.history![index],
+                                ),
+                                itemCount: _model.history!.length,
+                              ),
+                            ),
+                          )
+                // TransactionHistoryTile(
+                //     transaction: TransactionHistory(
+                //         month: 'September',
+                //         year: '2022',
+                //         total: 1400,
+                //         food: 70,
+                //         clothes: 1200,
+                //         travel: 30,
+                //         miscellaneous: 100),
+                //     budget: '2000'),
+              ],
+            ),
           )),
         ],
       ),
