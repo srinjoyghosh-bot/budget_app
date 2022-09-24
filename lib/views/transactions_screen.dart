@@ -4,6 +4,7 @@ import 'package:budget_app/views/widgets/transaction_tile.dart';
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../constants/enums.dart';
 import '../styles.dart';
@@ -61,9 +62,24 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           ),
           Expanded(
               child: (_model.body == null || _model.state == ViewState.busy)
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: brandColor,
+                  ? Shimmer.fromColors(
+                      baseColor: Colors.white.withOpacity(0.4),
+                      highlightColor: Colors.grey.withOpacity(0.4),
+                      child: ListView.builder(
+                        itemBuilder: (_, index) => SizedBox(
+                          width: double.infinity,
+                          height: SizeConfig.blockSizeVertical * 10,
+                          child: Card(
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12))),
+                            margin: EdgeInsets.symmetric(
+                              horizontal: SizeConfig.blockSizeHorizontal * 3,
+                              vertical: SizeConfig.blockSizeVertical,
+                            ),
+                          ),
+                        ),
+                        itemCount: 6,
                       ),
                     )
                   : _model.body!.isEmpty

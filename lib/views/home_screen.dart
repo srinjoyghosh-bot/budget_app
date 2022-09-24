@@ -5,6 +5,7 @@ import 'package:budget_app/views/widgets/home_expenditure_tile.dart';
 import 'package:budget_app/views/widgets/transaction_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.onClick}) : super(key: key);
@@ -38,7 +39,42 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(width: 10),
             user == null
-                ? Container()
+                ? Shimmer.fromColors(
+                    baseColor: Colors.white.withOpacity(0.4),
+                    highlightColor: Colors.grey.withOpacity(0.4),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal * 30,
+                          height: SizeConfig.blockSizeVertical * 2.4,
+                          child: const Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12))),
+                            // margin: EdgeInsets.symmetric(
+                            //   horizontal: SizeConfig.blockSizeHorizontal * 3,
+                            //   vertical: SizeConfig.blockSizeVertical,
+                            // ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal * 30,
+                          height: SizeConfig.blockSizeVertical * 1.8,
+                          child: const Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12))),
+                            // margin: EdgeInsets.symmetric(
+                            //   horizontal: SizeConfig.blockSizeHorizontal * 3,
+                            //   vertical: SizeConfig.blockSizeVertical,
+                            // ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 : Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +111,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   budget: _model.budget!,
                   spent: totalSpent.toStringAsFixed(2),
                 )
-              : Container(),
+              : Shimmer.fromColors(
+                  baseColor: Colors.white.withOpacity(0.4),
+                  highlightColor: Colors.grey.withOpacity(0.4),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: SizeConfig.blockSizeVertical * 12,
+                    child: Card(
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12))),
+                      margin: EdgeInsets.symmetric(
+                        horizontal: SizeConfig.blockSizeHorizontal * 3,
+                        vertical: SizeConfig.blockSizeVertical,
+                      ),
+                    ),
+                  ),
+                ),
           SizedBox(height: SizeConfig.blockSizeVertical * 2),
           Expanded(
             child: Container(
