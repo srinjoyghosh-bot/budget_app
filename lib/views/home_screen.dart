@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _model = Provider.of<MainViewModel>(context);
     final user = _model.user;
     final transactions = _model.today;
+    final monthly = _model.monthly;
     final totalSpent = _model.total;
     return Scaffold(
       backgroundColor: brandColor,
@@ -106,10 +107,11 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           // const ExpenditureSummaryTile(),
-          (user != null && transactions != null)
+          (user != null && transactions != null && monthly != null)
               ? HomeExpenditureTile(
                   budget: _model.budget!,
-                  spent: totalSpent.toStringAsFixed(2),
+                  spent: (_model.totalSpent ?? 0).toStringAsFixed(2),
+                  transactions: monthly,
                 )
               : Shimmer.fromColors(
                   baseColor: Colors.white.withOpacity(0.4),

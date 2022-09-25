@@ -1,7 +1,9 @@
 import 'package:budget_app/size_config.dart';
 import 'package:budget_app/styles.dart';
 import 'package:budget_app/view_models/auth_viewmodel.dart';
+import 'package:budget_app/view_models/main_viewmodel.dart';
 import 'package:budget_app/views/edit_budget_screen.dart';
+import 'package:budget_app/views/edit_profile_screen.dart';
 import 'package:budget_app/views/login_screen.dart';
 import 'package:budget_app/views/widgets/profile_screen_tile.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +21,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    final model = Provider.of<MainViewModel>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -36,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Image.asset('assets/icons/user.png'),
           SizedBox(height: SizeConfig.blockSizeVertical),
           Text(
-            'Srinjoy Ghosh',
+            model.user == null ? '' : model.user!.name,
             style: TextStyle(
                 color: brandColor,
                 fontWeight: FontWeight.bold,
@@ -44,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           SizedBox(height: SizeConfig.blockSizeVertical * 0.5),
           Text(
-            'srinjoygh@gmail.com',
+            model.user == null ? '' : model.user!.email,
             style: TextStyle(
                 color: brandColor,
                 fontSize: SizeConfig.blockSizeVertical * 2.2,
@@ -54,7 +57,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ProfileScreenTile(
             title: 'Edit Profile',
             icon: const Icon(Icons.edit),
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, EditProfileScreen.id);
+            },
           ),
           ProfileScreenTile(
             title: 'Edit Budget',

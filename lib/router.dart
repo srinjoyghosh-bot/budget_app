@@ -1,6 +1,7 @@
 import 'package:budget_app/views/add_transaction_screen.dart';
 import 'package:budget_app/views/change_password_screen.dart';
 import 'package:budget_app/views/edit_budget_screen.dart';
+import 'package:budget_app/views/edit_profile_screen.dart';
 import 'package:budget_app/views/login_screen.dart';
 import 'package:budget_app/views/main_screen.dart';
 import 'package:budget_app/views/signup_screen.dart';
@@ -15,6 +16,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const AddTransactionScreen());
       case EditBudgetScreen.id:
         return MaterialPageRoute(builder: (_) => const EditBudgetScreen());
+      case EditProfileScreen.id:
+        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
       case ChangePasswordScreen.id:
         return MaterialPageRoute(builder: (_) => const ChangePasswordScreen());
       case LoginScreen.id:

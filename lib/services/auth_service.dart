@@ -131,4 +131,33 @@ class AuthService {
       };
     }
   }
+
+  Future<Map<String, dynamic>> editProfile(
+      String id, String email, String username) async {
+    try {
+      final result = await dio.put('${BASE_URL}auth/edit-profile/$id',
+          data: {
+            'name': username,
+            'email': email,
+          },
+          options: Options(contentType: 'application/json'));
+      if (result.statusCode == 200) {
+        return {
+          'status': 200,
+          'message': 'Profile updated!',
+        };
+      }
+      return {
+        'status': result.statusCode,
+        'message': (result.data != null && result.data['data'] is List)
+            ? result.data['data'][0]['msg']
+            : result.data['message'],
+      };
+    } on Exception catch (e) {
+      return {
+        'status': 500,
+        'message': "Some error occurred. Try again",
+      };
+    }
+  }
 }

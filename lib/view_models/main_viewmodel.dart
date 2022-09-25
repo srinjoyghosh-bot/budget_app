@@ -19,6 +19,7 @@ class MainViewModel extends BaseViewModel {
   List<Transaction>? _monthlyTransactions;
   List<TransactionHistory>? _history;
   double _total = 0, _food = 0, _clothes = 0, _travel = 0, _miscellaneous = 0;
+  double? totalSpent;
   int pageIndex = 0;
 
   DateTime _selectedDate = DateTime.now();
@@ -65,22 +66,47 @@ class MainViewModel extends BaseViewModel {
     } else {
       _monthlyTransactions!.insert(0, transaction);
     }
-    _total += transaction.amount;
+    if (transaction.type == TransactionType.spent) {
+      _total += transaction.amount;
+    } else {
+      _total -= transaction.amount;
+    }
+
     switch (transaction.category) {
       case TransactionCategory.food:
-        _food += transaction.amount;
+        if (transaction.type == TransactionType.spent) {
+          _food += transaction.amount;
+        } else {
+          _food -= transaction.amount;
+        }
         break;
       case TransactionCategory.clothes:
-        _clothes += transaction.amount;
+        if (transaction.type == TransactionType.spent) {
+          _clothes += transaction.amount;
+        } else {
+          _clothes -= transaction.amount;
+        }
         break;
       case TransactionCategory.travel:
-        _travel += transaction.amount;
+        if (transaction.type == TransactionType.spent) {
+          _travel += transaction.amount;
+        } else {
+          _travel -= transaction.amount;
+        }
         break;
       case TransactionCategory.miscellaneous:
-        _miscellaneous += transaction.amount;
+        if (transaction.type == TransactionType.spent) {
+          _miscellaneous += transaction.amount;
+        } else {
+          _miscellaneous -= transaction.amount;
+        }
         break;
       default:
-        _miscellaneous += transaction.amount;
+        if (transaction.type == TransactionType.spent) {
+          _miscellaneous += transaction.amount;
+        } else {
+          _miscellaneous -= transaction.amount;
+        }
         break;
     }
     notifyListeners();
@@ -122,6 +148,27 @@ class MainViewModel extends BaseViewModel {
     } else {
       return false;
     }
+  }
+
+  Future<bool> editProfile(String username, String email) async {
+    setState(ViewState.busy);
+    String id = _storageService.currentUserId;
+    final result = await _authService.editProfile(id, email, username);
+    if (result['status'] == 200) {
+      final user = User(
+        id: _user!.id,
+        name: username,
+        email: email,
+        password: _user!.password,
+        budget: _budget,
+      );
+      setUser(user);
+      setState(ViewState.idle);
+      return true;
+    }
+    setErrorMessage(result['message']);
+    setState(ViewState.idle);
+    return false;
   }
 
   Future<List<Transaction>> fetchTodayTransactions() async {
@@ -177,6 +224,7 @@ class MainViewModel extends BaseViewModel {
     final result = await _transactionService.getStats(id);
     if (result['status'] == 200) {
       final stats = result['stats'];
+      totalSpent = stats.total;
       _total = stats.total;
       _food = stats.food;
       _clothes = stats.clothes;

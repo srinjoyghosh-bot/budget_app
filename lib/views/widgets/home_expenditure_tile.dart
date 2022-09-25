@@ -1,6 +1,8 @@
+import 'package:budget_app/models/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import '../../constants/enums.dart';
 import '../../size_config.dart';
 
 class HomeExpenditureTile extends StatelessWidget {
@@ -8,14 +10,29 @@ class HomeExpenditureTile extends StatelessWidget {
     Key? key,
     required this.spent,
     required this.budget,
+    required this.transactions,
   }) : super(key: key);
   String spent;
   String budget;
+  List<Transaction> transactions;
+
+  double getTotal() {
+    double total = 0;
+    print(transactions.length);
+    for (Transaction t in transactions) {
+      if (t.type == TransactionType.spent) {
+        total += t.amount;
+      } else {
+        total -= t.amount;
+      }
+    }
+    print(total);
+    return total;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final percent =
-        (double.tryParse(spent) ?? 0) / (double.tryParse(budget) ?? 1);
+    final percent = (getTotal()) / (double.tryParse(budget) ?? 1);
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
@@ -33,7 +50,7 @@ class HomeExpenditureTile extends StatelessWidget {
               FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
-                  'Spent this month: Rs $spent',
+                  'Spent this month: Rs ${getTotal()}',
                   style: TextStyle(
                       fontSize: SizeConfig.blockSizeVertical * 2.5,
                       fontWeight: FontWeight.w500),
