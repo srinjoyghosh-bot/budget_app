@@ -1,6 +1,7 @@
 import 'package:budget_app/size_config.dart';
 import 'package:budget_app/styles.dart';
 import 'package:budget_app/view_models/main_viewmodel.dart';
+import 'package:budget_app/views/edit_profile_screen.dart';
 import 'package:budget_app/views/widgets/home_expenditure_tile.dart';
 import 'package:budget_app/views/widgets/transaction_tile.dart';
 import 'package:flutter/material.dart';
@@ -19,12 +20,25 @@ class _HomeScreenState extends State<HomeScreen> {
   late MainViewModel _model;
 
   @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) {
+      fetch();
+    });
+    super.initState();
+  }
+
+  void fetch() async {
+    final model = Provider.of<MainViewModel>(context, listen: false);
+
+    await model.fetchStats();
+  }
+
+  @override
   Widget build(BuildContext context) {
     _model = Provider.of<MainViewModel>(context);
     final user = _model.user;
     final transactions = _model.today;
     final monthly = _model.monthly;
-    final totalSpent = _model.total;
     return Scaffold(
       backgroundColor: brandColor,
       appBar: AppBar(
@@ -99,7 +113,9 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             iconSize: SizeConfig.blockSizeHorizontal * 7,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, EditProfileScreen.id);
+            },
             icon: const Icon(Icons.settings),
           )
         ],
