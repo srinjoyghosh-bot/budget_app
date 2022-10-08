@@ -34,6 +34,7 @@ class _MainScreenState extends State<MainScreen> {
     await model.fetchProfile();
     await model.fetchTodayTransactions();
     await model.fetchStats();
+    await model.fetchHistory();
   }
 
   void onTapped(int index) {

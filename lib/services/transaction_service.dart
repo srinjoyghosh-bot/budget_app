@@ -93,7 +93,7 @@ class TransactionService {
     List<TransactionHistory> history = [];
     try {
       final result = await dio.get(
-        '${BASE_URL}transaction/history/$id',
+        '${BASE_URL}transactions/history/$id',
         options: Options(contentType: 'application/json'),
       );
       if (result.statusCode == 200) {
@@ -149,15 +149,15 @@ class TransactionService {
                   }
                   break;
               }
-              history.add(TransactionHistory(
-                  month: month,
-                  year: year,
-                  total: total,
-                  food: food,
-                  clothes: clothes,
-                  travel: travel,
-                  miscellaneous: miscellaneous));
             }
+            history.add(TransactionHistory(
+                month: month,
+                year: year,
+                total: total,
+                food: food,
+                clothes: clothes,
+                travel: travel,
+                miscellaneous: miscellaneous));
           }
         }
         return {

@@ -73,30 +73,15 @@ class _StatsScreenState extends State<StatsScreen> {
                             ),
                           )
                         : Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      SizeConfig.blockSizeHorizontal * 5),
-                              child: ListView.builder(
-                                itemBuilder: (context, index) =>
-                                    TransactionHistoryTile(
-                                  budget: _model.budget ?? '0',
-                                  transaction: _model.history![index],
-                                ),
-                                itemCount: _model.history!.length,
+                            child: ListView.builder(
+                              itemBuilder: (context, index) =>
+                                  TransactionHistoryTile(
+                                budget: _model.budget ?? '0',
+                                transaction: _model.history![index],
                               ),
+                              itemCount: _model.history!.length,
                             ),
                           )
-                // TransactionHistoryTile(
-                //     transaction: TransactionHistory(
-                //         month: 'September',
-                //         year: '2022',
-                //         total: 1400,
-                //         food: 70,
-                //         clothes: 1200,
-                //         travel: 30,
-                //         miscellaneous: 100),
-                //     budget: '2000'),
               ],
             ),
           )),
