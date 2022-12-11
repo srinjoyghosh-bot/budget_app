@@ -139,8 +139,8 @@ class MainViewModel extends BaseViewModel {
   int get index => pageIndex;
 
   Future<bool> fetchProfile() async {
-    String id = _storageService.currentUserId;
-    final result = await _authService.getProfile(id);
+    String token = _storageService.token;
+    final result = await _authService.getProfile(token);
     if (result != null) {
       setUser(result);
       setBudget(result.budget);
@@ -152,8 +152,8 @@ class MainViewModel extends BaseViewModel {
 
   Future<bool> editProfile(String username, String email) async {
     setState(ViewState.busy);
-    String id = _storageService.currentUserId;
-    final result = await _authService.editProfile(id, email, username);
+    String token = _storageService.token;
+    final result = await _authService.editProfile(token, email, username);
     if (result['status'] == 200) {
       final user = User(
         id: _user!.id,
@@ -172,9 +172,9 @@ class MainViewModel extends BaseViewModel {
   }
 
   Future<List<Transaction>> fetchTodayTransactions() async {
-    String id = _storageService.currentUserId;
+    String token = _storageService.token;
     final result =
-        await _transactionService.getDatedTransactions(DateTime.now(), id);
+        await _transactionService.getDatedTransactions(DateTime.now(), token);
 
     setToday(result);
     return result;
@@ -182,8 +182,8 @@ class MainViewModel extends BaseViewModel {
 
   Future<List<Transaction>> fetchBodyTransactions(DateTime date) async {
     setState(ViewState.busy);
-    String id = _storageService.currentUserId;
-    final result = await _transactionService.getDatedTransactions(date, id);
+    String token = _storageService.token;
+    final result = await _transactionService.getDatedTransactions(date, token);
     setBody(result);
     setState(ViewState.idle);
     return result;
@@ -193,7 +193,7 @@ class MainViewModel extends BaseViewModel {
       TransactionType type, TransactionCategory category) async {
     setState(ViewState.busy);
     final result = await _transactionService.create(
-        title, amount, type, category, _storageService.currentUserId);
+        title, amount, type, category, _storageService.token);
     if (result['status'] == 200) {
       final transaction = result['transaction'];
       addTransaction(transaction);
@@ -208,7 +208,7 @@ class MainViewModel extends BaseViewModel {
   Future<bool> updatedBudget(String budget) async {
     setState(ViewState.busy);
     final result =
-        await _authService.changeBudget(_storageService.currentUserId, budget);
+        await _authService.changeBudget(_storageService.token, budget);
     if (result['status'] == 200) {
       setBudget(budget);
       setState(ViewState.idle);
@@ -220,8 +220,8 @@ class MainViewModel extends BaseViewModel {
   }
 
   Future<bool> fetchStats() async {
-    String id = _storageService.currentUserId;
-    final result = await _transactionService.getStats(id);
+    String token = _storageService.token;
+    final result = await _transactionService.getStats(token);
     if (result['status'] == 200) {
       final stats = result['stats'];
       totalSpent = stats.total;
@@ -238,8 +238,8 @@ class MainViewModel extends BaseViewModel {
   }
 
   Future<bool> fetchHistory() async {
-    String id = _storageService.currentUserId;
-    final result = await _transactionService.history(id);
+    String token = _storageService.token;
+    final result = await _transactionService.history(token);
     if (result['status'] == 200) {
       _history = result['history'];
       return true;

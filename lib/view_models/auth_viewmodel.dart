@@ -34,6 +34,7 @@ class AuthViewModel extends BaseViewModel {
     if (result['status'] == 200) {
       _storageService.isLoggedIn = true;
       _storageService.currentUserId = result['userId'];
+      _storageService.token = result['token'];
       return true;
     }
     setErrorMessage(result['message']);
@@ -43,11 +44,12 @@ class AuthViewModel extends BaseViewModel {
   void logout() {
     _storageService.isLoggedIn = false;
     _storageService.currentUserId = '';
+    _storageService.token = '';
   }
 
   Future<bool> fetchProfile() async {
-    String id = _storageService.currentUserId;
-    final result = await _authService.getProfile(id);
+    String token = _storageService.token;
+    final result = await _authService.getProfile(token);
     if (result != null) {
       setUser(result);
       return true;
@@ -60,7 +62,7 @@ class AuthViewModel extends BaseViewModel {
       String oldPw, String newPw, String confirmPw) async {
     setState(ViewState.busy);
     final result = await _authService.changePassword(
-        _storageService.currentUserId, oldPw, newPw, confirmPw);
+        _storageService.token, oldPw, newPw, confirmPw);
     if (result['status'] == 200) {
       setState(ViewState.idle);
       return true;

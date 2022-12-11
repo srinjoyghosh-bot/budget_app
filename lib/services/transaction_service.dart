@@ -13,10 +13,13 @@ class TransactionService {
   var dio = Dio();
 
   Future<List<Transaction>> getDatedTransactions(
-      DateTime date, String id) async {
+      DateTime date, String token) async {
     try {
-      final result = await dio.get('${BASE_URL}transactions/get/$id',
-          options: Options(headers: {'Content-Type': 'application/json'}),
+      final result = await dio.get('${BASE_URL}transactions/get',
+          options: Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
+          }),
           queryParameters: {'date': getFormattedTime(date)});
       // print(getFormattedTime(date));
       if (result.statusCode == 200) {
@@ -32,7 +35,7 @@ class TransactionService {
   }
 
   Future<Map<String, dynamic>> create(String title, String amount,
-      TransactionType type, TransactionCategory category, String id) async {
+      TransactionType type, TransactionCategory category, String token) async {
     try {
       final result = await dio.post('${BASE_URL}transactions/add',
           data: jsonEncode({
@@ -40,9 +43,11 @@ class TransactionService {
             'amount': amount,
             'type': type.name,
             'category': category.name,
-            'userId': id
+            // 'userId': id
           }),
-          options: Options(contentType: 'application/json'));
+          options: Options(
+              contentType: 'application/json',
+              headers: {'Authorization': 'Bearer $token'}));
       if (result.statusCode == 200) {
         final transaction = Transaction.fromJson(result.data['result']);
         return {
@@ -64,10 +69,12 @@ class TransactionService {
     }
   }
 
-  Future<Map<String, dynamic>> getStats(String id) async {
+  Future<Map<String, dynamic>> getStats(String token) async {
     try {
-      final result = await dio.get('${BASE_URL}transactions/stats/$id',
-          options: Options(contentType: 'application/json'));
+      final result = await dio.get('${BASE_URL}transactions/stats',
+          options: Options(
+              contentType: 'application/json',
+              headers: {'Authorization': 'Bearer $token'}));
       if (result.statusCode == 200) {
         final stats = TransactionStats.fromJson(result.data);
         return {
@@ -89,12 +96,14 @@ class TransactionService {
     }
   }
 
-  Future<Map<String, dynamic>> history(String id) async {
+  Future<Map<String, dynamic>> history(String token) async {
     List<TransactionHistory> history = [];
     try {
       final result = await dio.get(
-        '${BASE_URL}transactions/history/$id',
-        options: Options(contentType: 'application/json'),
+        '${BASE_URL}transactions/history',
+        options: Options(contentType: 'application/json', headers: {
+          'Authorization': 'Bearer $token',
+        }),
       );
       if (result.statusCode == 200) {
         if (result.data['data'] != null) {

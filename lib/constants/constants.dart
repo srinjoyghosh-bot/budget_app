@@ -1,1 +1,1 @@
-const String BASE_URL = 'https://joy-budget.herokuapp.com/';
+const String BASE_URL = 'https://joy-budget-app.onrender.com/';

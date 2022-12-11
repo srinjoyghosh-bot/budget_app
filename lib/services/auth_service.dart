@@ -46,6 +46,7 @@ class AuthService {
         return {
           'status': 200,
           'userId': result.data['userId'],
+          'token': result.data['token'],
         };
       } else {
         return {
@@ -63,9 +64,12 @@ class AuthService {
     }
   }
 
-  Future<User?> getProfile(String id) async {
+  Future<User?> getProfile(String token) async {
     try {
-      final result = await dio.get('${BASE_URL}auth/profile/$id');
+      final result = await dio.get('${BASE_URL}auth/profile',
+          options: Options(headers: {
+            'Authorization': 'Bearer $token',
+          }));
       if (result.statusCode == 200) {
         final user = User.fromJson(result.data['user']);
         return user;
@@ -79,16 +83,18 @@ class AuthService {
   }
 
   Future<Map<String, dynamic>> changePassword(
-      String id, String oldPw, String newPw, String confirmPw) async {
+      String token, String oldPw, String newPw, String confirmPw) async {
     try {
-      final result = await dio.post('${BASE_URL}auth/change-password',
+      final result = await dio.put('${BASE_URL}auth/change-password',
           data: {
             'oldPassword': oldPw,
             'newPassword': newPw,
             'confirmPassword': confirmPw,
-            'userId': id
+            // 'userId': id
           },
-          options: Options(contentType: 'application/json'));
+          options: Options(contentType: 'application/json', headers: {
+            'Authorization': 'Bearer $token',
+          }));
       if (result.statusCode == 200) {
         return {
           'status': 200,
@@ -106,12 +112,14 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> changeBudget(String id, String budget) async {
+  Future<Map<String, dynamic>> changeBudget(String token, String budget) async {
     try {
-      final result = await dio.post('${BASE_URL}auth/update-budget',
-          data: {'budget': budget, 'userId': id},
-          options: Options(contentType: 'application/json'));
-      print(result.data);
+      final result = await dio.put('${BASE_URL}auth/update-budget',
+          data: {'budget': budget},
+          options: Options(contentType: 'application/json', headers: {
+            'Authorization': 'Bearer $token',
+          }));
+      // print(result.data);
       if (result.statusCode == 200) {
         return {
           'status': 200,
@@ -133,14 +141,16 @@ class AuthService {
   }
 
   Future<Map<String, dynamic>> editProfile(
-      String id, String email, String username) async {
+      String token, String email, String username) async {
     try {
-      final result = await dio.put('${BASE_URL}auth/edit-profile/$id',
+      final result = await dio.put('${BASE_URL}auth/edit-profile',
           data: {
             'name': username,
             'email': email,
           },
-          options: Options(contentType: 'application/json'));
+          options: Options(contentType: 'application/json', headers: {
+            'Authorization': 'Bearer $token',
+          }));
       if (result.statusCode == 200) {
         return {
           'status': 200,
