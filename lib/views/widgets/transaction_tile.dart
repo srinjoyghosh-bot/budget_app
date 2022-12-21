@@ -65,10 +65,11 @@ class TransactionTile extends StatelessWidget {
                       fontSize: SizeConfig.blockSizeVertical * 1.8)),
             ],
           ),
-          const Spacer(),
-          FittedBox(
-            fit: BoxFit.scaleDown,
+          // const Spacer(),
+          Expanded(
             child: Text('Rs ${transaction.amount}',
+                textAlign: TextAlign.end,
+                // softWrap: false,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: transaction.type == TransactionType.receive

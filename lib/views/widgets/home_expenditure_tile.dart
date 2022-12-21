@@ -70,7 +70,7 @@ class HomeExpenditureTile extends StatelessWidget {
             radius: SizeConfig.blockSizeVertical * 5,
             lineWidth: 6.0,
             animation: true,
-            percent: percent,
+            percent: percent > 1 ? 1 : percent,
             center: Text(
               "${(percent * 100).toStringAsFixed(2)}%",
               style: TextStyle(
