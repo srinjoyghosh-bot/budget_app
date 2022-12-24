@@ -52,22 +52,23 @@ class ExpenditureSummaryTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               CircularIndicator(
-                  value: food,
+                  value: food > 0 ? food : 0,
                   total: total,
                   color: Colors.purple,
                   title: 'Food'),
               CircularIndicator(
-                  value: clothes,
+                  value: clothes > 0 ? clothes : 0,
                   total: total,
                   color: Colors.yellow,
                   title: 'Clothes'),
               CircularIndicator(
-                  value: travel,
-                  total: total,
-                  color: Colors.blueAccent,
-                  title: 'Travel'),
+                value: travel > 0 ? travel : 0,
+                total: total,
+                color: Colors.blueAccent,
+                title: 'Travel',
+              ),
               CircularIndicator(
-                  value: miscellaneous,
+                  value: miscellaneous > 0 ? miscellaneous : 0,
                   total: total,
                   color: Colors.teal,
                   title: 'Miscellaneous')
