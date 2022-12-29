@@ -201,7 +201,15 @@ class _SignupScreenState extends State<SignupScreen> {
                   SizedBox(height: SizeConfig.blockSizeVertical * 4),
                   TextButton.icon(
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, LoginScreen.id);
+                      Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (_, __, ___) => const LoginScreen(),
+                          transitionDuration: const Duration(seconds: 1),
+                          transitionsBuilder: (_, a, __, c) =>
+                              FadeTransition(opacity: a, child: c),
+                        ),
+                      );
                     },
                     icon: const Icon(Icons.arrow_circle_left_outlined),
                     label: Text('Login',

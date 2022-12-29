@@ -15,8 +15,11 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   final LocalStorageService _service = locator<LocalStorageService>();
+  late Animation<double> animation;
+  late AnimationController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +29,8 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: Image.asset(
           'assets/logo/budgeting.png',
-          height: SizeConfig.blockSizeVertical * 20,
-          width: SizeConfig.blockSizeHorizontal * 50,
+          height: SizeConfig.blockSizeVertical * animation.value,
+          width: SizeConfig.blockSizeHorizontal * animation.value,
         ),
       ),
     );
@@ -36,7 +39,27 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    controller =
+        AnimationController(duration: const Duration(seconds: 1), vsync: this);
+    animation = Tween<double>(begin: 20, end: 50).animate(controller)
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controller.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controller.forward();
+        }
+      });
+    controller.forward();
     _goToNextScreen();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   void _goToNextScreen() {

@@ -26,7 +26,13 @@ class AppRouter {
       case LoginScreen.id:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case SignupScreen.id:
-        return MaterialPageRoute(builder: (_) => const SignupScreen());
+        return PageRouteBuilder(
+          pageBuilder: (_, __, ___) => const SignupScreen(),
+          transitionDuration: const Duration(seconds: 1),
+          transitionsBuilder: (_, a, __, c) =>
+              FadeTransition(opacity: a, child: c),
+        );
+      // return MaterialPageRoute(builder: (_) => const SignupScreen());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(
