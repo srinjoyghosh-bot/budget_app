@@ -80,6 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: const Icon(Icons.logout),
             onTap: () {
               Provider.of<AuthViewModel>(context, listen: false).logout();
+              Provider.of<MainViewModel>(context, listen: false).clear();
               Navigator.of(context).pushReplacementNamed(LoginScreen.id);
             },
           ),

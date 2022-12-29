@@ -25,6 +25,20 @@ class MainViewModel extends BaseViewModel {
   DateTime _selectedDate = DateTime.now();
   String _budget = '0';
 
+  clear() {
+    _user = null;
+    _todaysTransactions = null;
+    _transactionsBody = null;
+    _history = null;
+    totalSpent = null;
+    _budget = '0';
+    _total = 0;
+    _food = 0;
+    _clothes = 0;
+    _travel = 0;
+    _miscellaneous = 0;
+  }
+
   setUser(User userData) {
     _user = userData;
     notifyListeners();
