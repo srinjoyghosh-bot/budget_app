@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:budget_app/constants/constants.dart';
 import 'package:budget_app/constants/enums.dart';
@@ -6,24 +7,35 @@ import 'package:budget_app/models/transaction.dart';
 import 'package:budget_app/models/transaction_history.dart';
 import 'package:budget_app/models/transaction_stats.dart';
 import 'package:budget_app/util/time.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class TransactionService {
-  var dio = Dio();
+  // var dio = Dio();
+
+  Uri getUri(String endpoint) {
+    return Uri.parse('${BASE_URL}transactions/$endpoint');
+  }
 
   Future<List<Transaction>> getDatedTransactions(
       DateTime date, String token) async {
     try {
-      final result = await dio.get('${BASE_URL}transactions/get',
-          options: Options(headers: {
+      // final result = await dio.get('${BASE_URL}transactions/get',
+      //     options: Options(headers: {
+      //       'Content-Type': 'application/json',
+      //       'Authorization': 'Bearer $token'
+      //     }),
+      //     queryParameters: {'date': getFormattedTime(date)});
+      final result = await http.get(
+          getUri('get')
+              .replace(queryParameters: {'date': getFormattedTime(date)}),
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
-          }),
-          queryParameters: {'date': getFormattedTime(date)});
+          });
       // print(getFormattedTime(date));
       if (result.statusCode == 200) {
-        return List<Transaction>.from(result.data['transactions']
+        return List<Transaction>.from(jsonDecode(result.body)['transactions']
             .map((transaction) => Transaction.fromJson(transaction)));
       } else {
         return [];
@@ -37,19 +49,34 @@ class TransactionService {
   Future<Map<String, dynamic>> create(String title, String amount,
       TransactionType type, TransactionCategory category, String token) async {
     try {
-      final result = await dio.post('${BASE_URL}transactions/add',
-          data: jsonEncode({
-            'title': title,
-            'amount': amount,
-            'type': type.name,
-            'category': category.name,
-            // 'userId': id
-          }),
-          options: Options(
-              contentType: 'application/json',
-              headers: {'Authorization': 'Bearer $token'}));
+      // final result = await dio.post('${BASE_URL}transactions/add',
+      //     data: jsonEncode({
+      //       'title': title,
+      //       'amount': amount,
+      //       'type': type.name,
+      //       'category': category.name,
+      //       // 'userId': id
+      //     }),
+      //     options: Options(
+      //         contentType: 'application/json',
+      //         headers: {'Authorization': 'Bearer $token'}));
+      final result = await http.post(
+        getUri('add'),
+        body: jsonEncode({
+          'title': title,
+          'amount': amount,
+          'type': type.name,
+          'category': category.name,
+          // 'userId': id
+        }),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        },
+      );
       if (result.statusCode == 200) {
-        final transaction = Transaction.fromJson(result.data['result']);
+        final transaction =
+            Transaction.fromJson(jsonDecode(result.body)['result']);
         return {
           'status': 200,
           'message': 'Transaction created!',
@@ -58,7 +85,8 @@ class TransactionService {
       }
       return {
         'status': result.statusCode,
-        'message': result.data['message'] ?? 'Some error occurred. Try again'
+        'message': jsonDecode(result.body)['message'] ??
+            'Some error occurred. Try again'
       };
     } on Exception catch (e) {
       debugPrint(e.toString());
@@ -71,12 +99,19 @@ class TransactionService {
 
   Future<Map<String, dynamic>> getStats(String token) async {
     try {
-      final result = await dio.get('${BASE_URL}transactions/stats',
-          options: Options(
-              contentType: 'application/json',
-              headers: {'Authorization': 'Bearer $token'}));
+      // final result = await dio.get('${BASE_URL}transactions/stats',
+      //     options: Options(
+      //         contentType: 'application/json',
+      //         headers: {'Authorization': 'Bearer $token'}));
+      final result = await http.get(
+        getUri('stats'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+      );
       if (result.statusCode == 200) {
-        final stats = TransactionStats.fromJson(result.data);
+        final stats = TransactionStats.fromJson(jsonDecode(result.body));
         return {
           'status': 200,
           'stats': stats,
@@ -99,16 +134,24 @@ class TransactionService {
   Future<Map<String, dynamic>> history(String token) async {
     List<TransactionHistory> history = [];
     try {
-      final result = await dio.get(
-        '${BASE_URL}transactions/history',
-        options: Options(contentType: 'application/json', headers: {
+      // final result = await dio.get(
+      //   '${BASE_URL}transactions/history',
+      //   options: Options(contentType: 'application/json', headers: {
+      //     'Authorization': 'Bearer $token',
+      //   }),
+      // );
+      final result = await http.get(
+        getUri('history'),
+        headers: {
+          'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
-        }),
+        },
       );
+      final data = jsonDecode(result.body);
       if (result.statusCode == 200) {
-        if (result.data['data'] != null) {
+        if (data['data'] != null) {
           // final data = result.data['data'];
-          for (MapEntry entry in result.data['data'].entries) {
+          for (MapEntry entry in data['data'].entries) {
             String month = entry.key
                 .toString()
                 .substring(0, entry.key.toString().indexOf('_'));
@@ -176,7 +219,7 @@ class TransactionService {
       } else {
         return {
           'status': result.statusCode,
-          'message': result.data['message'] ?? 'Some error occurred. Try again'
+          'message': data['message'] ?? 'Some error occurred. Try again'
         };
       }
     } on Exception catch (e) {

@@ -21,10 +21,13 @@ class AuthViewModel extends BaseViewModel {
   Future<bool> signup(
       String email, String password, String username, String budget) async {
     setState(ViewState.busy);
-    bool result =
+    final result =
         await _authService.signupUser(email, password, username, budget);
     setState(ViewState.idle);
-    return result;
+    if (!result['result']) {
+      setErrorMessage(result['message']);
+    }
+    return result['result'];
   }
 
   Future<bool> login(String email, String password) async {

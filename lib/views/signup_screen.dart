@@ -31,7 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
     if (status) {
       showSuccessToast('Account created', context);
     } else {
-      showErrorToast('Some error occured', context);
+      showErrorToast(_model.errorMessage, context);
     }
   }
 
